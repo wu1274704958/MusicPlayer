@@ -1,38 +1,35 @@
 #pragma once
-#include <SFML\Graphics.hpp>
+#include "FFT_view.h"
 
 namespace fv{
-	class FFT1_View : public sf::Shape 
+	class FFT1_View : public FFT_View 
 	{
-		float *pdata;
-		int fft_size;
-		float m_radius;
+	private:
+		float a;
+		float rx;
+		float ry;
+		float o;
+		float x0;
+		float y0;
 		static const float pi;
 
-		std::vector<sf::Vector2f> m_ps_copy;
-		std::vector<sf::Vector2f> m_ps;
-		
-		
-
 	public:
-		FFT1_View(float *pdata, int size, float radius = 164.f) 
+		FFT1_View(float *pdata, int size, float radius = 164.f) : FFT_View(pdata,size)
 		{
-			this->pdata = pdata;
-			this->fft_size = size;
-			this->m_radius = radius;
+			this->rx = radius;
+			this->ry = radius;
+			this->o = radius / 180.0f;
+			this->a = 360.0f;
 
-			for (int i = 0; i < fft_size; i++)
-			{
-				float angle = i * 2 * pi / fft_size - pi / 2;
-				float x = std::cos(angle) * m_radius;
-				float y = std::sin(angle) * m_radius;
+			x0 = 0.f;
+			y0 = 0.f;
 
-				m_ps_copy.push_back(sf::Vector2f(x,y));
-				m_ps.push_back(sf::Vector2f(x, y));
-			}
+			init();
 		}
-		void updatePoint();
-		virtual std::size_t getPointCount() const;
-		virtual sf::Vector2f getPoint(std::size_t index) const;
+		void init() override;
+		void updatePoint() override;
+		virtual std::size_t getPointCount() const override;
+		virtual sf::Vector2f getPoint(std::size_t index) const override;
+		virtual ~FFT1_View() = default;
 	};
 }

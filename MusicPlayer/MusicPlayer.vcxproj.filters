@@ -36,6 +36,9 @@
     <ClCompile Include="Pumper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="FFT2_View.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GetFileName.h">
@@ -57,6 +60,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Pumper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FFT2_View.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FFT_view.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

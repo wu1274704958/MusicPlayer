@@ -531,7 +531,7 @@ void fill_music(fv::MusicPlayer *player,std::shared_ptr<sfg::Box> scrolled_windo
 				pumper->setIndex(0);
 			}
 			else {
-				cleanFx();
+				//cleanFx();
 				player->playStream((*v)[i]);
 				pumper->setIndex(i + 1);
 			}
