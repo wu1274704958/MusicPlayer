@@ -10,7 +10,6 @@ const wchar_t  * const SupportFile::supportList[SupportFile::supportNum] = {
 
 bool SupportFile::isSupport(const wchar_t *other)
 {
-	
 	for (int i = 0; i < supportNum; i++)
 	{
 		if (lstrcmpW(supportList[i],other) == 0)

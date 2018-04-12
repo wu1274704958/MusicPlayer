@@ -26,10 +26,8 @@ namespace fv{
 
 			init();
 		}
-		void init() override;
-		void updatePoint() override;
-		virtual std::size_t getPointCount() const override;
-		virtual sf::Vector2f getPoint(std::size_t index) const override;
+		virtual void init() override;
+		virtual void updatePoint(float l, float h) override;
 		virtual ~FFT1_View() = default;
 	};
 }

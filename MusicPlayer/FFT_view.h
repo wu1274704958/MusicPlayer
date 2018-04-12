@@ -16,8 +16,18 @@ namespace fv {
 
 		}
 		
-		virtual void updatePoint() = 0;
+		virtual void updatePoint(float l,float h) = 0;
 		virtual void init() = 0;
+
+		virtual std::size_t getPointCount() const override
+		{
+			return m_ps.size();
+		}
+		virtual sf::Vector2f getPoint(std::size_t index) const override
+		{
+			return m_ps[index];
+		}
+
 	protected:
 		float *m_pdata;
 		int m_fft_size;

@@ -5,7 +5,12 @@ const float fv::FFT1_View::pi = 3.141592654f;
 
 void fv::FFT1_View::init()
 {
-	float angle = (360.0 - a) / 2.0f;
+
+	this->setFillColor(sf::Color(11, 23, 70));
+	this->setOutlineColor(sf::Color(0, 199, 140));
+	this->setOutlineThickness(3.0);
+
+	float angle = (360.0f - a) / 2.0f;
 	float ang_zl = a / m_fft_size;
 	for (int i = 0; i < m_fft_size; i++)
 	{
@@ -19,10 +24,9 @@ void fv::FFT1_View::init()
 	}
 }
 
-void fv::FFT1_View::updatePoint()
+void fv::FFT1_View::updatePoint(float l, float h)
 {
-	
-	
+	this->setScale(l, h);
 	for (int i = 0; i < m_fft_size; i++)
 	{
 		sf::Transform trans;
@@ -33,12 +37,3 @@ void fv::FFT1_View::updatePoint()
 	update();
 }
 
-std::size_t fv::FFT1_View::getPointCount() const
-{
-	return m_ps.size();
-}
-
-sf::Vector2f fv::FFT1_View::getPoint(std::size_t index) const
-{
-	return m_ps[index];
-}

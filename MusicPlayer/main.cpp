@@ -23,6 +23,7 @@
 #include <SFGUI\ComboBox.hpp>
 
 #include "FFT1_View.h"
+#include "FFT2_View.h"
 #include "MusicPlayer.h"
 #include "Pumper.h"
 
@@ -33,7 +34,9 @@
 
 #include <Windows.h>
 
-float FFT_DATA[128];
+#define FFT_DATA_SIZE 128
+
+float FFT_DATA[FFT_DATA_SIZE];
 
 std::stack<std::shared_ptr<std::vector<MMFile>>> file_root;
 
@@ -46,6 +49,11 @@ bool isPressed_for_scale = false;
 bool enable3DSurround = false;
 
 bool isDrawMs = false;
+
+#define FFT_MODE_NUM 2
+
+int fft_view_mode = 0; 
+fv::FFT_View* fft_views[FFT_MODE_NUM];
 
 #define POS_MAX_LEN 480
 
@@ -62,6 +70,8 @@ void cleanFx();
 inline void fill_music(fv::MusicPlayer *player, std::shared_ptr<sfg::Box> scrolled_window_box, fv::Pumper *pumper);
 void loadAllCharGlyph();
 void init_3D_pos();
+void destroy();
+void switch_fft_mode(sfg::Window &draw_fft_window);
 
 int main(int argc,char **argv)
 {	
@@ -267,14 +277,9 @@ int main(int argc,char **argv)
 
 	auto canvas = sfg::Canvas::Create();
 
-	fv::FFT1_View fft_view(FFT_DATA,128);
-	
-	fft_view.setFillColor(sf::Color(11, 23, 70));
-	fft_view.setOutlineColor(sf::Color(0, 199, 140));
-	fft_view.setOutlineThickness(3.0);
-	
+	fft_views[fft_view_mode] = new fv::FFT1_View(FFT_DATA,FFT_DATA_SIZE);
 
-	fft_view.setPosition(draw_fft_window->GetRequisition().x  / 2, 
+	fft_views[fft_view_mode]->setPosition(draw_fft_window->GetRequisition().x  / 2,
 		draw_fft_window->GetRequisition().y  / 2
 		);
 	/*
@@ -351,6 +356,9 @@ int main(int argc,char **argv)
 				case sf::Keyboard::D:
 					isDrawMs = !isDrawMs;
 					break;
+				case sf::Keyboard::H:
+					switch_fft_mode(*draw_fft_window);
+					break;
 				default:
 					break;
 				}
@@ -401,10 +409,8 @@ int main(int argc,char **argv)
 				//level_low.setScale(sf::Vector2f( l , 1.0f));
 				//level_hig.setScale(sf::Vector2f(h, 1.0f));
 
-				fft_view.setScale(l, h);
-
 				player.getData(FFT_DATA, BASS_DATA_FFT256);
-				fft_view.updatePoint();
+				fft_views[fft_view_mode]->updatePoint(l,h);
 				
 			}
 
@@ -452,7 +458,7 @@ int main(int argc,char **argv)
 		canvas->Bind();
 		canvas->Clear(sf::Color(112,128,144,50));
 	
-		canvas->Draw(fft_view);
+		canvas->Draw(*(fft_views[fft_view_mode]));
 		//canvas->Draw(level_low);
 		//canvas->Draw(level_hig);
 		canvas->Display();
@@ -487,6 +493,9 @@ int main(int argc,char **argv)
 			Sleep(t);
 		}
 	}
+
+	destroy();
+
 	return EXIT_SUCCESS;
 }
 
@@ -595,6 +604,40 @@ void cleanFx()
 	}
 }
 
+void destroy()
+{
+	for (int i = 0; i < FFT_MODE_NUM; i++)
+	{
+		if (fft_views[i])
+		{
+			delete fft_views[i];
+		}
+	}
+}
+
+void switch_fft_mode(sfg::Window &draw_fft_window)
+{
+	fft_view_mode++;
+	if (fft_view_mode >= FFT_MODE_NUM)
+	{
+		fft_view_mode = 0;
+	}
+	if (fft_views[fft_view_mode] == nullptr)
+	{
+		switch (fft_view_mode)
+		{
+		case 0:
+			fft_views[fft_view_mode] = new fv::FFT1_View(FFT_DATA, FFT_DATA_SIZE);
+			break;
+		case 1:
+			fft_views[fft_view_mode] = new fv::FFT2_View(FFT_DATA, FFT_DATA_SIZE);
+			break;
+		}
+		fft_views[fft_view_mode]->setPosition(draw_fft_window.GetRequisition().x / 2,
+			draw_fft_window.GetRequisition().y / 2
+		);
+	}
+}
 
 /*
 
