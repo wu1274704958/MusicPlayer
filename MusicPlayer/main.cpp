@@ -32,7 +32,6 @@
 #include <thread>
 #include <mutex>
 
-#include <Windows.h>
 
 #define FFT_DATA_SIZE 128
 
@@ -490,7 +489,7 @@ int main(int argc,char **argv)
 		}
 		if ((t = 16 - t) > 0)
 		{
-			Sleep(t);
+			std::this_thread::sleep_for(std::chrono::duration<int,std::milli>(t));
 		}
 	}
 
