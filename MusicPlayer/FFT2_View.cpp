@@ -16,7 +16,7 @@ void fv::FFT2_View::init()
 {
 
 	this->setFillColor(sf::Color(0, 0, 0, 0));
-	this->setOutlineColor(sf::Color(0, 199, 140));
+	this->setOutlineColor(sf::Color(0, 255, 255));
 	this->setOutlineThickness(3.0);
 
 	for (int i = 0; i < m_fft_size; i++)
