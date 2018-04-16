@@ -72,6 +72,7 @@ void init_3D_pos();
 void destroy();
 void switch_fft_mode(sfg::Window &draw_fft_window);
 
+
 int main(int argc,char **argv)
 {	
 	std::tuple<int, int, const char*,bool> args_tup = ArgsAnalysiser::analysis(argc, argv);
@@ -109,6 +110,15 @@ int main(int argc,char **argv)
 	file_root.push(v);
 	
 	loadAllCharGlyph();
+
+	
+
+	sf::Texture texture_bg;
+	texture_bg.loadFromFile(".\\..\\..\\bg.jpg");
+
+	sf::Sprite bg_sprite;
+	bg_sprite.setTexture(texture_bg,true);
+	bg_sprite.setPosition(0.f, 0.f);
 
 	auto window = sfg::Window::Create();
 	window->SetTitle("list");
@@ -465,7 +475,8 @@ int main(int argc,char **argv)
 		
 		// Rendering.
 		//render_window.setActive(true);
-
+		render_window.draw(bg_sprite);
+		
 		if (isDrawMs)
 		{
 			render_window.draw(text_ms);
