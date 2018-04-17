@@ -20,25 +20,7 @@ void GetFileName::getFileNameA(std::vector<MMFile> &v, const char *pChar)
 		MultiByteToWideChar(CP_ACP, 0, pChar, -1, pszBuf, needWChar);
 	}
 
-	std::wstring dir(pszBuf);
-
-	
-
-	dir += L"\\*";
-    
-	if ((han = FindFirstFile(dir.c_str(), &ffd)) != nullptr)
-	{
-		while(FindNextFile(han, &ffd))
-		{
-			if (lstrcmpW(ffd.cFileName, L".") == 0 || lstrcmpW(ffd.cFileName, L"..") == 0)
-				continue;
-			std::cout << ffd.dwFileAttributes << "  " << ffd.cFileName <<  std::endl;
-			MMFile tempFile(ffd.dwFileAttributes, ffd.cFileName, pszBuf);
-			if (SupportFile::isSupport(tempFile.getSuffix()) || tempFile.getType() == 16)
-				v.push_back(tempFile);
-			
-		}
-	}
+	getFileNameW(v, pszBuf);
     
 	if (pszBuf)
 		delete[] pszBuf;
@@ -59,9 +41,9 @@ void GetFileName::getFileNameW(std::vector<MMFile>& v, const wchar_t * d)
 		{
 			if (lstrcmpW(ffd.cFileName, L".") == 0 || lstrcmpW(ffd.cFileName, L"..") == 0)
 				continue;
-			std::wcout << ffd.dwFileAttributes << "  " << ffd.cFileName << std::endl;
-			MMFile tempFile(ffd.dwFileAttributes, ffd.cFileName, d);
-			if (SupportFile::isSupport(tempFile.getSuffix()) || tempFile.getType() == 16)
+			//std::wcout << ffd.dwFileAttributes << "  " << ffd.cFileName << std::endl;
+			MMFile tempFile(ffd.dwFileAttributes == 16 ? MMFile::TYPE_DIR : MMFile::TYPE_FILE, ffd.cFileName, d);
+			if (SupportFile::isSupport(tempFile.getSuffix()) || tempFile.getType() == MMFile::TYPE_DIR)
 				v.push_back(tempFile);
 		}
 	}

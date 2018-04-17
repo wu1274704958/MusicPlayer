@@ -36,6 +36,10 @@ namespace fv {
 		void rand();
 		void loop();
 		void none();
+
+		template<size_t N>
+		void all_templet();
+
 		std::function<void()> fill_music_func;
 
 		PUMP_MODE m_mode;

@@ -10,7 +10,7 @@ fv::Pumper::Pumper(std::stack<std::shared_ptr<std::vector<MMFile>>> &root, Music
 	m_mode = NONE;
 	pump_dir = false;
 	m_index = 0;
-
+	srand((unsigned)time(NULL));
 	
 }
 
@@ -48,6 +48,8 @@ fv::Pumper::PUMP_MODE fv::Pumper::getMode()
 void fv::Pumper::setMode(PUMP_MODE mo)
 {
 	m_mode = mo;
+	if(mo == RAND)
+		srand((unsigned)time(NULL));
 }
 
 int fv::Pumper::getIndex()
@@ -75,19 +77,27 @@ void fv::Pumper::setFillMusicFunc(std::function<void()> f)
 	fill_music_func = f;
 }
 
-void fv::Pumper::rand()
+template<size_t N>
+void fv::Pumper::all_templet()
 {
 	if (!m_root.top()->empty())
 	{
-		srand((unsigned)time(NULL));
-		m_index = ::rand() % m_root.top()->size();
-
-		if (m_root.top()->at(m_index).getType() == 16 && pump_dir && (bool)fill_music_func)
+		if constexpr(N == RAND)
+		{
+			m_index = ::rand() % m_root.top()->size();
+		}
+		else if constexpr(N == LOOP)
+		{
+			if (m_index >= m_root.top()->size())
+			{
+				m_index = 0;
+			}
+		}
+		if (m_root.top()->at(m_index).getType() == MMFile::TYPE_DIR && pump_dir && (bool)fill_music_func)
 		{
 			std::shared_ptr<std::vector<MMFile>> temp = std::make_shared<std::vector<MMFile>>();
 			GetFileName::getFileNameW(*temp, m_root.top()->at(m_index).getAbsolutePath());
 			m_root.push(temp);
-
 			fill_music_func();
 			m_index = 0;
 		}
@@ -98,27 +108,14 @@ void fv::Pumper::rand()
 	}
 }
 
+void fv::Pumper::rand()
+{
+	all_templet<RAND>();
+}
+
 void fv::Pumper::loop()
 {
-	if (!m_root.top()->empty())
-	{
-		if (m_index >= m_root.top()->size())
-		{
-			m_index = 0;
-		}
-		if (m_root.top()->at(m_index).getType() == 16 && pump_dir && (bool)fill_music_func)
-		{
-			std::shared_ptr<std::vector<MMFile>> temp = std::make_shared<std::vector<MMFile>>();
-			GetFileName::getFileNameW(*temp, m_root.top()->at(m_index).getAbsolutePath());
-			m_root.push(temp);
-			fill_music_func();
-			m_index = 0;
-		}
-		else {
-			m_player.playStream(m_root.top()->at(m_index));
-			++m_index;
-		}
-	}
+	all_templet<LOOP>();
 }
 
 void fv::Pumper::none()

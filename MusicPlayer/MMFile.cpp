@@ -7,14 +7,14 @@
 
 MMFile::MMFile()
 {
-    this->type = -1;
+    this->type = TYPE_FILE;
     this->name = nullptr;
     this->path = nullptr;
     this->suffix = nullptr;
     this->absolutePath = nullptr;
 }
 
-MMFile::MMFile(int type,const wchar_t *name, const wchar_t *path)
+MMFile::MMFile(FILE_TYPE type,const wchar_t *name, const wchar_t *path)
 {
     this->type = type;
     this->name = new std::wstring(name);
@@ -64,12 +64,12 @@ MMFile::~MMFile()
         delete this->absolutePath;
 }
 
-int MMFile::getType() const
+MMFile::FILE_TYPE MMFile::getType() const
 {
         return this->type;
 }
 
-void MMFile::setType(unsigned char t)
+void MMFile::setType(FILE_TYPE t)
 {
     type = t;
 }

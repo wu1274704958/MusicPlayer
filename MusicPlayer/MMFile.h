@@ -9,9 +9,16 @@
 #include <string>
 
 class MMFile {
+public:
+	enum FILE_TYPE
+	{
+		TYPE_DIR = 0,
+		TYPE_FILE
+	};
+
 private:
 
-    unsigned char type;
+	FILE_TYPE type;
     std::wstring *name;
     std::wstring *path;
     std::wstring *suffix;
@@ -19,12 +26,12 @@ private:
 public:
 
     MMFile();
-    MMFile(int type,const wchar_t *name,const wchar_t *path);
+    MMFile(FILE_TYPE type,const wchar_t *name,const wchar_t *path);
     MMFile(const MMFile &mmf);
     MMFile(MMFile &&mmf);
 
-    int getType() const;
-    void setType( unsigned char t);
+	FILE_TYPE getType() const;
+    void setType(FILE_TYPE t);
 
 	const wchar_t *getName() const;
     void setName(const wchar_t* n);

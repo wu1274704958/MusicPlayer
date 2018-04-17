@@ -539,7 +539,7 @@ void fill_music(fv::MusicPlayer *player,std::shared_ptr<sfg::Box> scrolled_windo
 		btn->GetSignal(sfg::Widget::OnLeftClick).Connect(
 			[v, i, player,pumper]
 		{
-			if ((*v)[i].getType() == 16)
+			if ((*v)[i].getType() == MMFile::TYPE_DIR)
 			{
 				auto temp_v = std::make_shared<std::vector<MMFile>>();
 				GetFileName::getFileNameW(*temp_v, (*v)[i].getAbsolutePath());
@@ -596,7 +596,7 @@ void loadAllCharGlyph()
 			{
 				font->getGlyph(f.getName()[i], font_size, false);
 			}
-			if (f.getType() == 16) 
+			if (f.getType() == MMFile::TYPE_DIR) 
 			{
 				std::shared_ptr<std::vector<MMFile>> temp = std::make_shared<std::vector<MMFile>>();
 				GetFileName::getFileNameW(*temp, f.getAbsolutePath());
