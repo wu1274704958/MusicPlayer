@@ -54,7 +54,7 @@ bool isDrawMs = false;
 int fft_view_mode = 0; 
 fv::FFT_View* fft_views[FFT_MODE_NUM];
 
-#define POS_MAX_LEN 480
+#define POS_MAX_LEN 720
 
 BASS_3DVECTOR pos[POS_MAX_LEN];
 int pos_i = 0;
@@ -428,14 +428,14 @@ int main(int argc,char **argv)
 				BASS_3DVECTOR vel;
 				if (pos_i == 0)
 				{
-					vel.x = pos[POS_MAX_LEN - 1].x - pos[0].x;
+					vel.x = pos[0].x - pos[POS_MAX_LEN - 1].x;
 					vel.y = 0;
-					vel.z = pos[POS_MAX_LEN - 1].z - pos[0].z;
+					vel.z = pos[0].z - pos[POS_MAX_LEN - 1].z;
 				}
 				else {
-					vel.x = pos[pos_i - 1].x - pos[pos_i].x;
+					vel.x = pos[pos_i ].x - pos[pos_i - 1].x;
 					vel.y = 0;
-					vel.z = pos[pos_i - 1].z - pos[pos_i].z;
+					vel.z = pos[pos_i ].z - pos[pos_i - 1].z;
 				}
 
 				BASS_ChannelSet3DPosition(player.getChan(), &pos[pos_i], NULL, &vel);
@@ -512,7 +512,7 @@ int main(int argc,char **argv)
 void init_3D_pos()
 {
 	float pi = 3.141592654f;
-	float m_radius = 2;
+	float m_radius = 1;
 	for (int i = 0; i < POS_MAX_LEN; ++i)
 	{
 		float angle = i * 2 * pi / POS_MAX_LEN - pi / 2;
