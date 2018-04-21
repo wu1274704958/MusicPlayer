@@ -67,10 +67,13 @@ sf::Text text_ms;
 
 void cleanFx();
 inline void fill_music(fv::MusicPlayer *player, std::shared_ptr<sfg::Box> scrolled_window_box, fv::Pumper *pumper);
-void loadAllCharGlyph();
+void loadAllCharGlyph(sf::RenderWindow* window);
 void init_3D_pos();
 void destroy();
 void switch_fft_mode(sfg::Window &draw_fft_window);
+
+template<size_t N>
+void drawSchedule(sf::RenderWindow* window);
 
 
 int main(int argc,char **argv)
@@ -109,7 +112,7 @@ int main(int argc,char **argv)
 	
 	file_root.push(v);
 	
-	loadAllCharGlyph();
+	loadAllCharGlyph(&render_window);
 
 	
 
@@ -119,6 +122,8 @@ int main(int argc,char **argv)
 	sf::Sprite bg_sprite;
 	bg_sprite.setTexture(texture_bg,true);
 	bg_sprite.setPosition(0.f, 0.f);
+
+	drawSchedule<54>(&render_window);
 
 	auto window = sfg::Window::Create();
 	window->SetTitle("list");
@@ -137,23 +142,24 @@ int main(int argc,char **argv)
 	// Always remember to set the minimum size of a ScrolledWindow.
 	scrolledwindow->SetRequisition(sf::Vector2f(300.f, 400.f));
 
+	drawSchedule<57>(&render_window);
 	fill_music(&player, scrolled_window_box,&pumper);
-
+	drawSchedule<66>(&render_window);
 	auto btn_play = sfg::Button::Create(L"²¥·Å");
 	btn_play->GetSignal(sfg::Widget::OnLeftClick).Connect([&player] {
 		player.play();
 	});
-
+	drawSchedule<67>(&render_window);
 	auto btn_pause = sfg::Button::Create(L"ÔÝÍ£");
 	btn_pause->GetSignal(sfg::Widget::OnLeftClick).Connect([&player] {
 		player.pause();
 	});
-		
+	drawSchedule<68>(&render_window);
 	auto btn_stop = sfg::Button::Create(L"Í£Ö¹");
 	btn_stop->GetSignal(sfg::Widget::OnLeftClick).Connect([&player] {
 		player.stop();
 	});
-
+	drawSchedule<69>(&render_window);
 	auto btn_back = sfg::Button::Create(L"·µ»Ø");
 	btn_back->GetSignal(sfg::Widget::OnLeftClick).Connect([&player,scrolled_window_box] {
 		if (file_root.size() > 1)
@@ -162,7 +168,7 @@ int main(int argc,char **argv)
 			need_update_list = true;
 		}
 	});
-
+	drawSchedule<70>(&render_window);
 	auto btn_3d = sfg::CheckButton::Create(L"3D»·ÈÆ");
 	btn_3d->GetSignal(sfg::CheckButton::OnToggle).Connect(
 		[btn_3d,&player] {
@@ -186,7 +192,7 @@ int main(int argc,char **argv)
 			
 		}
 	);
-
+	drawSchedule<71>(&render_window);
 	auto button_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL, 2.0f);
 
 	button_box->Pack(btn_play,true,true);
@@ -205,7 +211,7 @@ int main(int argc,char **argv)
 	scale->GetSignal(sfg::Widget::OnMouseLeftPress).Connect([] {
 		isPressed_for_scale = true;
 	});
-
+	drawSchedule<79>(&render_window);
 	scale->GetSignal(sfg::Widget::OnMouseLeftRelease).Connect([scale,&player]
 	{
 		if (!player.isOff())
@@ -219,7 +225,7 @@ int main(int argc,char **argv)
 		isPressed_for_scale = false;
 	});
 	//scale->GetAdjustment()->GetSignal(sfg::Adjustment::OnChange).Connect();
-
+	drawSchedule<80>(&render_window);
 	auto pump_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL, 2.0f);
 
 	auto pump_mode_combobox = sfg::ComboBox::Create();
@@ -252,7 +258,7 @@ int main(int argc,char **argv)
 	pump_box->Pack(pump_mode_combobox);
 	pump_box->Pack(btn_pump_dir);
 	pump_box->Pack(btn_3d);
-
+	drawSchedule<89>(&render_window);
 
 	auto volumebar = sfg::Scrollbar::Create();
 	volumebar->SetRange(.0f, 100.f);
@@ -291,6 +297,8 @@ int main(int argc,char **argv)
 	fft_views[fft_view_mode]->setPosition(draw_fft_window->GetRequisition().x  / 2,
 		draw_fft_window->GetRequisition().y  / 2
 		);
+
+	drawSchedule<95>(&render_window);
 	/*
 	sf::RectangleShape level_low;
 	level_low.setPosition((draw_fft_window->GetRequisition().x - 9) / 2.0f, 10);
@@ -315,7 +323,7 @@ int main(int argc,char **argv)
 	window->Add(box);
 
 
-	
+	drawSchedule<100>(&render_window);
 
 	sfg::Desktop desktop;
 	
@@ -559,7 +567,7 @@ void fill_music(fv::MusicPlayer *player,std::shared_ptr<sfg::Box> scrolled_windo
 	}
 }
 
-void loadAllCharGlyph()
+void loadAllCharGlyph(sf::RenderWindow* window)
 {
 	auto a = sfg::Button::Create();
 
@@ -573,7 +581,7 @@ void loadAllCharGlyph()
 		text_ms.setPosition(0, 0);
 		text_ms.setFillColor(sf::Color::Green);
 	}
-
+	drawSchedule<10>(window);
 
 	std::stack<std::shared_ptr<std::vector<MMFile>>> root = file_root;
 
@@ -604,6 +612,7 @@ void loadAllCharGlyph()
 			}
 		}
 	}
+	drawSchedule<50>(window);
 }
 
 void cleanFx()
@@ -647,6 +656,18 @@ void switch_fft_mode(sfg::Window &draw_fft_window)
 			draw_fft_window.GetRequisition().y / 2
 		);
 	}
+}
+
+
+template<size_t N>
+void drawSchedule(sf::RenderWindow* window)
+{
+	char buf[6] = { 0 };
+	sprintf_s(buf, "%d%%", N);
+	text_ms.setString(buf);
+	window->clear();
+	window->draw(text_ms);
+	window->display();
 }
 
 /*
