@@ -11,9 +11,13 @@ fv::Pumper::Pumper(std::stack<std::shared_ptr<std::vector<MMFile>>> &root, Music
 	pump_dir = false;
 	m_index = 0;
 	srand((unsigned)time(NULL));
-	
+	next_music = nullptr;
 }
 
+void fv::Pumper::setNextMusic(const MMFile *nm)
+{
+	next_music = nm;
+}
 
 fv::Pumper::~Pumper()
 {
@@ -25,8 +29,7 @@ void fv::Pumper::pump()
 	switch (m_mode)
 	{
 	case NONE:
-		//none();
-		return;
+		none();
 		break;
 	case LOOP:
 		loop();
@@ -80,6 +83,16 @@ void fv::Pumper::setFillMusicFunc(std::function<void()> f)
 template<size_t N>
 void fv::Pumper::all_templet()
 {
+	if (next_music)
+	{
+		m_player.playStream(*next_music);
+		next_music = nullptr;
+		return;
+	}
+	if constexpr(N == NONE)
+	{
+		return;
+	}
 	if (!m_root.top()->empty())
 	{
 		if constexpr(N == RAND)
@@ -120,5 +133,5 @@ void fv::Pumper::loop()
 
 void fv::Pumper::none()
 {
-
+	all_templet<NONE>();
 }

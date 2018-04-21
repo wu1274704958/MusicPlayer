@@ -30,6 +30,7 @@ namespace fv {
 		bool getPumpDir();
 		void setPumpDir(bool pump_dir);
 		void setFillMusicFunc(std::function<void()> f);
+		void setNextMusic(const MMFile *nm);
 		
 
 	private:
@@ -47,5 +48,6 @@ namespace fv {
 		MusicPlayer &m_player;
 		int m_index;
 		bool pump_dir;
+		const MMFile *next_music;
 	};
 }

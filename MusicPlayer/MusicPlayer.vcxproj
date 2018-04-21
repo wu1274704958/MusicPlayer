@@ -143,6 +143,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MMFile.cpp" />
     <ClCompile Include="MusicPlayer.cpp" />
+    <ClCompile Include="PopMenu.cpp" />
     <ClCompile Include="Pumper.cpp" />
     <ClCompile Include="SupportFile.cpp" />
   </ItemGroup>
@@ -154,6 +155,7 @@
     <ClInclude Include="GetFileName.h" />
     <ClInclude Include="MMFile.h" />
     <ClInclude Include="MusicPlayer.h" />
+    <ClInclude Include="PopMenu.h" />
     <ClInclude Include="Pumper.h" />
     <ClInclude Include="SupportFile.h" />
   </ItemGroup>

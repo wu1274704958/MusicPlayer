@@ -28,10 +28,8 @@
 #include "Pumper.h"
 
 #include <SFML\Graphics.hpp>
-#include <stack>
 #include <thread>
-#include <mutex>
-
+#include "PopMenu.h"
 
 #define FFT_DATA_SIZE 128
 
@@ -63,7 +61,8 @@ int pos_i = 0;
 HFX fx[10] = { -1 };
 sf::Text text_ms;
 
-//std::mutex load_file_name_mutex;
+fv::PopMenu popMenu;
+bool POP_MENU_IS_HANDLER_EVENT = false;
 
 void cleanFx();
 inline void fill_music(fv::MusicPlayer *player, std::shared_ptr<sfg::Box> scrolled_window_box, fv::Pumper *pumper);
@@ -93,8 +92,6 @@ int main(int argc,char **argv)
 	}
 
 	sf::RenderWindow render_window(sf::VideoMode(std::get<0>(args_tup), std::get<1>(args_tup)), "MusicPlayer");
-
-
 
 	render_window.setVerticalSyncEnabled(true);
 	render_window.resetGLStates();
@@ -129,7 +126,7 @@ int main(int argc,char **argv)
 	window->SetTitle("list");
 
 	auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 6.0f);
-	auto scrolled_window_box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+	auto scrolled_window_box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL,3.f);
 
 	auto scrolledwindow = sfg::ScrolledWindow::Create();
 	
@@ -362,7 +359,7 @@ int main(int argc,char **argv)
 		// Event processing.
 		while (render_window.pollEvent(event)) {
 			desktop.HandleEvent(event);
-
+			popMenu.handlerEvent(event, POP_MENU_IS_HANDLER_EVENT);
 			// If window is about to be closed, leave program.
 			if (event.type == sf::Event::Closed) {
 				return 0;
@@ -380,7 +377,8 @@ int main(int argc,char **argv)
 					break;
 				}
 			}
-
+			
+			
 			/*if (event.type == sf::Event::KeyReleased)
 			{
 				if (!player.isOff())
@@ -465,12 +463,15 @@ int main(int argc,char **argv)
 
 			//std::lock_guard<std::mutex> lock(load_file_name_mutex);
 			desktop.Update(clock.getElapsedTime().asSeconds());
+			
 			clock.restart();
 		}
 
 		
 		// Update SFGUI with elapsed seconds since last call.
 		render_window.clear();
+
+		
 
 		canvas->Bind();
 		canvas->Clear(sf::Color(112,128,144,50));
@@ -482,7 +483,7 @@ int main(int argc,char **argv)
 		canvas->Unbind();
 		
 		// Rendering.
-		//render_window.setActive(true);
+		
 		render_window.draw(bg_sprite);
 		
 		if (isDrawMs)
@@ -491,8 +492,10 @@ int main(int argc,char **argv)
 		}
 		
 		
+		//render_window.setActive(true);
 		
 		sfgui.Display(render_window);
+		popMenu.draw(render_window);
 		render_window.display();
 		
 		
@@ -563,6 +566,23 @@ void fill_music(fv::MusicPlayer *player,std::shared_ptr<sfg::Box> scrolled_windo
 				pumper->setIndex(i + 1);
 			}
 		});
+		const MMFile* pmf = &(v->at(i));
+		btn->GetSignal(sfg::Button::OnMouseMove).Connect([pmf, pumper] {
+			if (pmf->getType() != MMFile::TYPE_DIR)
+			{
+				if (!POP_MENU_IS_HANDLER_EVENT)
+				{
+					POP_MENU_IS_HANDLER_EVENT = true;
+					
+					popMenu.setOnSelected([pumper,pmf](int index){
+						pumper->setNextMusic(pmf);
+					});
+				}
+			}
+		});
+		btn->GetSignal(sfg::Button::OnMouseLeave).Connect([] {
+			POP_MENU_IS_HANDLER_EVENT = false;
+		});
 		scrolled_window_box->PackEnd(btn);
 	}
 }
@@ -574,6 +594,10 @@ void loadAllCharGlyph(sf::RenderWindow* window)
 	const auto& font_name = sfg::Context::GetDefaultEngine().GetProperty<std::string>("FontName", a);
 	auto font_size = sfg::Context::GetDefaultEngine().GetProperty<unsigned int>("FontSize", a);
 	const auto& font = sfg::Context::GetDefaultEngine().GetResourceManager().GetFont(font_name);
+
+	//init popMenu 
+	popMenu.init(window->getSize().x,window->getSize().y,&(*font));
+	popMenu.add(sf::String(L"下一首播放"));
 
 	//init text for ms
 	{
