@@ -24,6 +24,7 @@ namespace fv {
 		int b_h;
 		float n_w; //ÏÖÔÚµÄ¿í
 		float n_h;
+		int last_hover_i;
 	public:
 		PopMenu();
 		void init(int w,int h,const sf::Font *f);

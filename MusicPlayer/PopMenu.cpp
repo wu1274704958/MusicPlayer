@@ -7,6 +7,7 @@ fv::PopMenu::PopMenu() : /*m_pos(0.f, 0.f) ,*/ m_bgColor(sf::Color::Cyan)
 	m_space = 3;
 	m_textColor = sf::Color::White;
 	m_hover_Color = sf::Color::Blue;
+	last_hover_i = -1;
 }
 
 void fv::PopMenu::init(int w, int h, const sf::Font * f)
@@ -115,16 +116,24 @@ void fv::PopMenu::updatePos(float x, float y)
 
 void fv::PopMenu::updateBgColor(sf::Vector2f && p)
 {
+	if (last_hover_i >= 0)
+	{
+		m_v[last_hover_i]->setOutlineColor(m_bgColor);
+		last_hover_i = -1;
+	}
+		
+	int i = 0;
 	for (auto &t : m_v)
 	{
 		if (t->getGlobalBounds().contains(p))
 		{
-			//t->setFillColor(m_hover_Color);
-			t->setOutlineColor(m_hover_Color);
+			last_hover_i = i;
 		}
-		else {
-			t->setOutlineColor(m_bgColor);
-			//t->setFillColor(m);
-		}
+		++i;
+	}
+
+	if (last_hover_i >= 0)
+	{
+		m_v[last_hover_i]->setOutlineColor(m_hover_Color);
 	}
 }
