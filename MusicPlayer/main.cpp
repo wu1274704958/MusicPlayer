@@ -333,6 +333,7 @@ int main(int argc,char **argv)
 	
 	//bool f = false;
 	//int i = 0;
+	bool isInterceptMBReleasedEvent = false;
 
 	while (render_window.isOpen()) {
 	
@@ -358,9 +359,15 @@ int main(int argc,char **argv)
 
 		// Event processing.
 		while (render_window.pollEvent(event)) {
+			if (isInterceptMBReleasedEvent && event.type == sf::Event::MouseButtonReleased)
+			{
+				isInterceptMBReleasedEvent = false;
+				continue;
+			}
+				
 			if (popMenu.handlerEvent(event, POP_MENU_IS_HANDLER_EVENT))
 			{
-				render_window.pollEvent(event);//弹出MouseButtonReleased 事件
+				isInterceptMBReleasedEvent = true;//拦截MouseButtonReleased 事件
 				continue;
 			}
 				
