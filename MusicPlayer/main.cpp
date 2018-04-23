@@ -224,6 +224,10 @@ int main(int argc,char **argv)
 		}
 		isPressed_for_scale = false;
 	});
+	scale->GetSignal(sfg::Widget::OnMouseLeave).Connect([] {
+		if(isPressed_for_scale)
+			isPressed_for_scale = false;
+	});
 	//scale->GetAdjustment()->GetSignal(sfg::Adjustment::OnChange).Connect();
 	drawSchedule<80>(&render_window);
 	auto pump_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL, 2.0f);
@@ -270,7 +274,8 @@ int main(int argc,char **argv)
 
 	volumeScale->SetValue(100.f);
 
-	volumeScale->GetSignal(sfg::Widget::OnMouseLeftRelease).Connect([volumeScale] {
+	volumeScale->GetAdjustment()->GetSignal(sfg::Adjustment::OnChange).Connect([volumeScale] {
+		std::cout << volumeScale->GetValue() << std::endl;
 		BASS_SetConfig(BASS_CONFIG_GVOL_SAMPLE, volumeScale->GetValue() * 100);
 		//BASS_SetVolume( / 100.0f);
 	});
@@ -347,6 +352,8 @@ int main(int argc,char **argv)
 			//std::thread t1(fill_music, &player, scrolled_window_box);
 			//t1.detach();
 			fill_music(&player, scrolled_window_box,&pumper);
+			scrolledwindow->GetVerticalAdjustment()->SetValue(0.f);
+			scrolledwindow->GetHorizontalAdjustment()->SetValue(0.f);
 			need_update_list = false;
 		}
 
