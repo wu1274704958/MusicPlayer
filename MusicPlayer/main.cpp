@@ -358,8 +358,14 @@ int main(int argc,char **argv)
 
 		// Event processing.
 		while (render_window.pollEvent(event)) {
+			if (popMenu.handlerEvent(event, POP_MENU_IS_HANDLER_EVENT))
+			{
+				render_window.pollEvent(event);//µ¯³öMouseButtonReleased ÊÂ¼þ
+				continue;
+			}
+				
 			desktop.HandleEvent(event);
-			popMenu.handlerEvent(event, POP_MENU_IS_HANDLER_EVENT);
+			
 			// If window is about to be closed, leave program.
 			if (event.type == sf::Event::Closed) {
 				return 0;

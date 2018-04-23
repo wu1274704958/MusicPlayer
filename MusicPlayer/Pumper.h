@@ -37,6 +37,7 @@ namespace fv {
 		void rand();
 		void loop();
 		void none();
+		void cleanup();
 
 		template<size_t N>
 		void all_templet();

@@ -18,16 +18,18 @@ void fv::PopMenu::init(int w, int h, const sf::Font * f)
 	setFont(f);
 }
 
-void fv::PopMenu::handlerEvent(sf::Event & event, bool auto_pop)
+bool fv::PopMenu::handlerEvent(sf::Event & event, bool auto_pop)
 {
+	bool res = false;
 	switch (event.type)
 	{
-	case sf::Event::MouseButtonReleased:
+	case sf::Event::MouseButtonPressed:
 		if (auto_pop && event.mouseButton.button == sf::Mouse::Right && !m_v.empty())
 		{
 			//std::cout << event.mouseButton.x << " + " << event.mouseButton.y << std::endl;
 			m_visible = true;
 			updatePos((float)event.mouseButton.x / n_w * b_w, (float)event.mouseButton.y / n_h * b_h);
+			res = true;
 		}
 		else if (m_visible && event.mouseButton.button == sf::Mouse::Left && !m_v.empty()) {
 			for (int i = 0; i < m_v.size(); ++i)
@@ -40,6 +42,7 @@ void fv::PopMenu::handlerEvent(sf::Event & event, bool auto_pop)
 				}
 			}
 			m_visible = false;
+			res = true;
 		}
 		break;
 	case sf::Event::MouseMoved:
@@ -53,6 +56,7 @@ void fv::PopMenu::handlerEvent(sf::Event & event, bool auto_pop)
 		n_h = (float)event.size.height; 
 		break;
 	}
+	return res;
 }
 
 void fv::PopMenu::draw(sf::RenderWindow & w)

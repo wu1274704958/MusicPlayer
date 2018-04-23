@@ -16,12 +16,13 @@ fv::Pumper::Pumper(std::stack<std::shared_ptr<std::vector<MMFile>>> &root, Music
 
 void fv::Pumper::setNextMusic(const MMFile *nm)
 {
-	next_music = nm;
+	cleanup();
+	next_music = new MMFile(*nm);
 }
 
 fv::Pumper::~Pumper()
 {
-	
+	cleanup();
 }
 
 void fv::Pumper::pump()
@@ -86,6 +87,7 @@ void fv::Pumper::all_templet()
 	if (next_music)
 	{
 		m_player.playStream(*next_music);
+		delete next_music;
 		next_music = nullptr;
 		return;
 	}
@@ -134,4 +136,13 @@ void fv::Pumper::loop()
 void fv::Pumper::none()
 {
 	all_templet<NONE>();
+}
+
+void fv::Pumper::cleanup()
+{
+	if (next_music)
+	{
+		delete next_music;
+		next_music = nullptr;
+	}
 }
