@@ -30,6 +30,7 @@
 #include <SFML\Graphics.hpp>
 #include <thread>
 #include "PopMenu.h"
+#include "FuncBox.h"
 
 #define FFT_DATA_SIZE 128
 
@@ -140,7 +141,9 @@ int main(int argc,char **argv)
 	scrolledwindow->SetRequisition(sf::Vector2f(300.f, 400.f));
 
 	drawSchedule<57>(&render_window);
+
 	fill_music(&player, scrolled_window_box,&pumper);
+
 	drawSchedule<66>(&render_window);
 	auto btn_play = sfg::Button::Create(L"²¥·Å");
 	btn_play->GetSignal(sfg::Widget::OnLeftClick).Connect([&player] {
@@ -372,6 +375,9 @@ int main(int argc,char **argv)
 			}
 				
 			desktop.HandleEvent(event);
+
+			if (event.type == sf::Event::MouseWheelMoved)
+				fb::handlerScrolledWindow(event,*scrolledwindow);
 			
 			// If window is about to be closed, leave program.
 			if (event.type == sf::Event::Closed) {

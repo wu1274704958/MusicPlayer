@@ -42,6 +42,9 @@
     <ClCompile Include="PopMenu.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="FuncBox.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GetFileName.h">
@@ -72,6 +75,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="PopMenu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FuncBox.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
