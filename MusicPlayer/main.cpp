@@ -536,7 +536,7 @@ int main(int argc,char **argv)
 void init_3D_pos()
 {
 	float pi = 3.141592654f;
-	float m_radius = 1;
+	float m_radius = 3;
 	for (int i = 0; i < POS_MAX_LEN; ++i)
 	{
 		float angle = i * 2 * pi / POS_MAX_LEN - pi / 2;
@@ -557,16 +557,16 @@ void fill_music(fv::MusicPlayer *player,std::shared_ptr<sfg::Box> scrolled_windo
 
 	for (int i = 0; i < v->size(); i++)
 	{
+		const MMFile* pmf = &(v->at(i));
+		auto btn = sfg::Button::Create(pmf->getName());
 		
-		auto btn = sfg::Button::Create((*v)[i].getName());
-
 		btn->GetSignal(sfg::Widget::OnLeftClick).Connect(
-			[v, i, player,pumper]
+			[pmf,i,player,pumper]
 		{
-			if ((*v)[i].getType() == MMFile::TYPE_DIR)
+			if (pmf->getType() == MMFile::TYPE_DIR)
 			{
 				auto temp_v = std::make_shared<std::vector<MMFile>>();
-				GetFileName::getFileNameW(*temp_v, (*v)[i].getAbsolutePath());
+				GetFileName::getFileNameW(*temp_v, pmf->getAbsolutePath());
 				
 				//std::lock_guard<std::mutex> lock(load_file_name_mutex);
 				file_root.push(temp_v);
@@ -575,11 +575,11 @@ void fill_music(fv::MusicPlayer *player,std::shared_ptr<sfg::Box> scrolled_windo
 			}
 			else {
 				//cleanFx();
-				player->playStream((*v)[i]);
+				player->playStream(*pmf);
 				pumper->setIndex(i + 1);
 			}
 		});
-		const MMFile* pmf = &(v->at(i));
+		
 		btn->GetSignal(sfg::Button::OnMouseMove).Connect([pmf, pumper] {
 			if (pmf->getType() != MMFile::TYPE_DIR)
 			{
