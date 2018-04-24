@@ -28,7 +28,8 @@ namespace fv {
 	public:
 		PopMenu();
 		void init(int w,int h,const sf::Font *f);
-		bool handlerEvent(sf::Event& event,bool auto_pop = true);
+		void pop();
+		bool handlerEvent(sf::Event& event);
 		void draw(sf::RenderWindow& w);
 		void add(sf::String&& str);
 		bool& visible();

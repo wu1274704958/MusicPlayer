@@ -63,7 +63,6 @@ HFX fx[10] = { -1 };
 sf::Text text_ms;
 
 fv::PopMenu popMenu;
-bool POP_MENU_IS_HANDLER_EVENT = false;
 
 void cleanFx();
 inline void fill_music(fv::MusicPlayer *player, std::shared_ptr<sfg::Box> scrolled_window_box, fv::Pumper *pumper);
@@ -86,8 +85,8 @@ int main(int argc,char **argv)
 	pumper.setFillMusicFunc([] {
 		need_update_list = true;
 	});
-	
-	if (std::get<3>(args_tup))
+	const bool enable_init_3d = std::get<3>(args_tup);
+	if (enable_init_3d)
 	{
 		init_3D_pos();
 	}
@@ -111,7 +110,6 @@ int main(int argc,char **argv)
 	file_root.push(v);
 	
 	loadAllCharGlyph(&render_window);
-
 	
 
 	sf::Texture texture_bg;
@@ -375,7 +373,7 @@ int main(int argc,char **argv)
 				continue;
 			}
 				
-			if (popMenu.handlerEvent(event, POP_MENU_IS_HANDLER_EVENT))
+			if (popMenu.handlerEvent(event))
 			{
 				isInterceptMBReleasedEvent = true;//À¹½ØMouseButtonReleased ÊÂ¼þ
 				continue;
@@ -402,10 +400,8 @@ int main(int argc,char **argv)
 				default:
 					break;
 				}
-			}
-			
-			
-			/*if (event.type == sf::Event::KeyReleased)
+			}			
+			/*if (!enable_init_3d && event.type == sf::Event::KeyReleased)
 			{
 				if (!player.isOff())
 				{
@@ -593,21 +589,14 @@ void fill_music(fv::MusicPlayer *player,std::shared_ptr<sfg::Box> scrolled_windo
 			}
 		});
 		
-		btn->GetSignal(sfg::Button::OnMouseMove).Connect([pmf, pumper] {
+		btn->GetSignal(sfg::Button::OnMouseRightRelease).Connect([pmf, pumper] {
 			if (pmf->getType() != MMFile::TYPE_DIR)
-			{
-				if (!POP_MENU_IS_HANDLER_EVENT)
-				{
-					POP_MENU_IS_HANDLER_EVENT = true;
-					
-					popMenu.setOnSelected([pumper,pmf](int index){
-						pumper->setNextMusic(pmf);
-					});
-				}
+			{		
+				popMenu.setOnSelected([pumper,pmf](int index){
+					pumper->setNextMusic(pmf);
+				});
+				popMenu.pop();
 			}
-		});
-		btn->GetSignal(sfg::Button::OnMouseLeave).Connect([] {
-			POP_MENU_IS_HANDLER_EVENT = false;
 		});
 		scrolled_window_box->PackEnd(btn);
 	}
