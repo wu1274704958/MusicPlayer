@@ -8,9 +8,6 @@
 
 void GetFileName::getFileNameA(std::vector<MMFile> &v, const char *pChar)
 {
-	WIN32_FIND_DATAW ffd;
-	HANDLE han = nullptr;
-
 	if (!pChar) return ;
 	wchar_t *pszBuf = NULL;
 	int needWChar = MultiByteToWideChar(CP_ACP, 0, pChar, -1, NULL, 0);
