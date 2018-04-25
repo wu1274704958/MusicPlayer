@@ -26,8 +26,10 @@ MMFile::MMFile(FILE_TYPE type,const wchar_t *name, const wchar_t *path)
 MMFile::MMFile(const MMFile &mmf)
 {
     this->type = mmf.type;
-    this->name = new std::wstring(*(mmf.name));
-    this->path = new std::wstring(*(mmf.path));
+	if (mmf.name)
+		this->name = new std::wstring(*(mmf.name));
+	if (mmf.path)
+		this->path = new std::wstring(*(mmf.path));
     if(mmf.suffix != nullptr)
         this->suffix = new std::wstring(*(mmf.suffix));
     else
@@ -52,16 +54,53 @@ MMFile::MMFile(MMFile &&mmf)
     mmf.absolutePath = nullptr;
 }
 
+MMFile & MMFile::operator=(const MMFile & mmf)
+{
+	cleanup();
+	this->type = mmf.type;
+	this->type = mmf.type;
+	if (mmf.name)
+		this->name = new std::wstring(*(mmf.name));
+	if (mmf.path)
+		this->path = new std::wstring(*(mmf.path));
+	if (mmf.suffix != nullptr)
+		this->suffix = new std::wstring(*(mmf.suffix));
+	else
+		analysisSuffix();
+	if (mmf.absolutePath != nullptr)
+		this->absolutePath = new std::wstring(*(mmf.absolutePath));
+	else
+		analysisAbsolutePath();
+
+	return *this;
+}
+
+MMFile & MMFile::operator=(MMFile && mmf)
+{
+#ifdef _DEBUG
+	std::cout << "operator=(MMFile && mmf) " << this->name << std::endl;
+#endif // DEBUG
+	cleanup();
+	this->type = mmf.type;
+
+	this->name = mmf.name;
+	this->path = mmf.path;
+	this->suffix = mmf.suffix;
+	this->absolutePath = mmf.absolutePath;
+	mmf.name = nullptr;
+	mmf.path = nullptr;
+	mmf.suffix = nullptr;
+	mmf.absolutePath = nullptr;
+
+	return *this;
+}
+
 MMFile::~MMFile()
 {
-    if(this->name != nullptr)
-        delete this->name;
-    if(this->path != nullptr)
-        delete this->path;
-    if(this->suffix != nullptr)
-        delete this->suffix;
-    if(this->absolutePath != nullptr)
-        delete this->absolutePath;
+#ifdef _DEBUG
+	std::cout << "~MMFile() " <<(size_t)(this->name) << std::endl;
+#endif // DEBUG
+	cleanup();
 }
 
 MMFile::FILE_TYPE MMFile::getType() const
@@ -100,22 +139,51 @@ const wchar_t *MMFile::getSuffix() const
     return suffix->data();
 }
 
+void MMFile::cleanup()
+{
+	if (this->name)
+	{
+		delete this->name;
+		this->name = nullptr;
+	}
+	if (this->path)
+	{
+		delete this->path;
+		this->path = nullptr;
+	}
+	if (this->suffix)
+	{
+		delete this->suffix;
+		this->suffix = nullptr;
+	}
+	if (this->absolutePath)
+	{
+		delete this->absolutePath;
+		this->absolutePath = nullptr;
+	}
+		
+}
+
 void MMFile::analysisSuffix()
 {
     //printf("%s\t",name->c_str());
-    int i = 0;
-    for(i = name->size() - 1;i >= 0;i--)
-    {
-        if(*(name->data() + i) == '.')
-            break;
-    }
-    if(i > 0)
-    {
-        //printf("%d  %s\n", i,temp.c_str());
-        suffix = new std::wstring(name->substr(i));
-    }else{
-        suffix = new std::wstring();
-    }
+	if (this->name)
+	{
+		int i = 0;
+		for (i = name->size() - 1; i >= 0; i--)
+		{
+			if (*(name->data() + i) == '.')
+				break;
+		}
+		if (i > 0)
+		{
+			//printf("%d  %s\n", i,temp.c_str());
+			suffix = new std::wstring(name->substr(i));
+		}
+		else {
+			suffix = new std::wstring();
+		}
+	}
 }
 
 
@@ -126,10 +194,13 @@ const wchar_t * MMFile::getAbsolutePath() const
 
 void MMFile::analysisAbsolutePath()
 {
-    absolutePath = new std::wstring();
-    absolutePath->operator+=(path->c_str());
-    absolutePath->operator+=(L"\\");
-    absolutePath->operator+=(name->c_str());
+	if (this->name && this->path)
+	{
+		absolutePath = new std::wstring();
+		absolutePath->operator+=(path->c_str());
+		absolutePath->operator+=(L"\\");
+		absolutePath->operator+=(name->c_str());
+	}
 }
 
 

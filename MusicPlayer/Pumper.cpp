@@ -111,6 +111,7 @@ void fv::Pumper::all_templet()
 		if (m_root.top()->at(m_index).getType() == MMFile::TYPE_DIR && pump_dir && (bool)fill_music_func)
 		{
 			std::shared_ptr<std::vector<MMFile>> temp = std::make_shared<std::vector<MMFile>>();
+			temp->reserve(5);
 			GetFileName::getFileNameW(*temp, m_root.top()->at(m_index).getAbsolutePath());
 			m_root.push(temp);
 			fill_music_func();

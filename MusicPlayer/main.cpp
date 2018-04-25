@@ -103,6 +103,7 @@ int main(int argc,char **argv)
 	
 
 	auto v = std::make_shared<std::vector<MMFile>>();
+	v->reserve(5);
 	
 	GetFileName::getFileNameA(*v, std::get<2>(args_tup));
 
@@ -575,6 +576,7 @@ void fill_music(fv::MusicPlayer *player,std::shared_ptr<sfg::Box> scrolled_windo
 			if (pmf->getType() == MMFile::TYPE_DIR)
 			{
 				auto temp_v = std::make_shared<std::vector<MMFile>>();
+				temp_v->reserve(5);
 				GetFileName::getFileNameW(*temp_v, pmf->getAbsolutePath());
 				
 				//std::lock_guard<std::mutex> lock(load_file_name_mutex);
@@ -646,8 +648,9 @@ void loadAllCharGlyph(sf::RenderWindow* window)
 			if (f.getType() == MMFile::TYPE_DIR) 
 			{
 				std::shared_ptr<std::vector<MMFile>> temp = std::make_shared<std::vector<MMFile>>();
+				temp->reserve(5);
 				GetFileName::getFileNameW(*temp, f.getAbsolutePath());
-				root.push(temp);
+				root.push(std::move(temp));
 			}
 		}
 	}

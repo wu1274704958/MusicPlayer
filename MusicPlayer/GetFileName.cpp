@@ -44,7 +44,7 @@ void GetFileName::getFileNameW(std::vector<MMFile>& v, const wchar_t * d)
 			//std::wcout << ffd.dwFileAttributes << "  " << ffd.cFileName << std::endl;
 			MMFile tempFile(ffd.dwFileAttributes == 16 ? MMFile::TYPE_DIR : MMFile::TYPE_FILE, ffd.cFileName, d);
 			if (SupportFile::isSupport(tempFile.getSuffix()) || tempFile.getType() == MMFile::TYPE_DIR)
-				v.push_back(tempFile);
+				v.push_back(std::move(tempFile));
 		}
 	}
 

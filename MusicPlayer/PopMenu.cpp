@@ -28,6 +28,8 @@ bool fv::PopMenu::handlerEvent(sf::Event & event)
 		if (event.mouseButton.button == sf::Mouse::Right && !m_v.empty())
 		{
 			updatePos((float)event.mouseButton.x / n_w * b_w, (float)event.mouseButton.y / n_h * b_h);
+			if (m_visible)
+				m_visible = false;
 		}
 		else if (m_visible && event.mouseButton.button == sf::Mouse::Left && !m_v.empty()) {
 			for (int i = 0; i < m_v.size(); ++i)

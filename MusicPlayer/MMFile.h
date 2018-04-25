@@ -29,6 +29,8 @@ public:
     MMFile(FILE_TYPE type,const wchar_t *name,const wchar_t *path);
     MMFile(const MMFile &mmf);
     MMFile(MMFile &&mmf);
+	MMFile& operator=(const MMFile &mmf);
+	MMFile& operator=(MMFile &&mmf);
 
 	FILE_TYPE getType() const;
     void setType(FILE_TYPE t);
@@ -48,6 +50,7 @@ public:
 
 
 private:
+	void cleanup();
     void analysisSuffix();
     void analysisAbsolutePath();
 };
