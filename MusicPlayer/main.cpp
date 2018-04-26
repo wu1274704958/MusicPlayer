@@ -71,7 +71,7 @@ void init_3D_pos();
 void destroy();
 void switch_fft_mode(sfg::Window &draw_fft_window);
 
-template<size_t N>
+template<int N>
 void drawSchedule(sf::RenderWindow* window);
 
 
@@ -701,7 +701,7 @@ void switch_fft_mode(sfg::Window &draw_fft_window)
 }
 
 
-template<size_t N>
+template<int N>
 void drawSchedule(sf::RenderWindow* window)
 {
 	char buf[6] = { 0 };
