@@ -32,6 +32,7 @@
 #include "PopMenu.h"
 #include "FuncBox.h"
 
+#define LIST_WIDGET 300.f
 #define FFT_DATA_SIZE 128
 
 float FFT_DATA[FFT_DATA_SIZE];
@@ -137,7 +138,7 @@ int main(int argc,char **argv)
 	scrolledwindow->AddWithViewport(scrolled_window_box);
 
 	// Always remember to set the minimum size of a ScrolledWindow.
-	scrolledwindow->SetRequisition(sf::Vector2f(300.f, 400.f));
+	scrolledwindow->SetRequisition(sf::Vector2f(LIST_WIDGET, 400.f));
 
 	drawSchedule<57>(&render_window);
 
@@ -353,6 +354,7 @@ int main(int argc,char **argv)
 			fill_music(&player, scrolled_window_box,&pumper);
 			scrolledwindow->GetVerticalAdjustment()->SetValue(0.f);
 			scrolledwindow->GetHorizontalAdjustment()->SetValue(0.f);
+			scrolledwindow->Refresh();
 			need_update_list = false;
 		}
 
@@ -568,8 +570,7 @@ void fill_music(fv::MusicPlayer *player,std::shared_ptr<sfg::Box> scrolled_windo
 	for (int i = 0; i < v->size(); i++)
 	{
 		const MMFile* pmf = &(v->at(i));
-		auto btn = sfg::Button::Create(pmf->getName());
-		
+		auto btn = sfg::Label::Create(pmf->getName());
 		btn->GetSignal(sfg::Widget::OnLeftClick).Connect(
 			[pmf,i,player,pumper]
 		{

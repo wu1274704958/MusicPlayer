@@ -50,6 +50,7 @@ CheckButton, ToggleButton {
 
 
 Label {
+	Color:#E6E6FAFF;
 	FontSize: 18;
 	FontName: ./../../STXIHEI.TTF;
 }
