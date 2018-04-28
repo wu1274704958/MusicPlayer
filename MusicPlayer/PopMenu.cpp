@@ -52,8 +52,10 @@ bool fv::PopMenu::handlerEvent(sf::Event & event)
 		}
 		break;
 	case sf::Event::Resized:
+		if (m_visible)
+			m_visible = false;
 		n_w = (float)event.size.width;
-		n_h = (float)event.size.height; 
+		n_h = (float)event.size.height;
 		break;
 	}
 	return res;
@@ -62,6 +64,12 @@ bool fv::PopMenu::handlerEvent(sf::Event & event)
 void fv::PopMenu::pop()
 {
 	this->m_visible = true;
+	float s_x =  b_w / n_w;
+	float s_y =  b_h / n_h;
+	for (auto &t : m_v)
+	{
+		t->setScale(s_x, s_y);
+	}
 }
 
 void fv::PopMenu::draw(sf::RenderWindow & w)
