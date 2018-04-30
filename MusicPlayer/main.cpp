@@ -59,13 +59,10 @@ fv::FFT_View* fft_views[FFT_MODE_NUM];
 BASS_3DVECTOR pos[POS_MAX_LEN];
 int pos_i = 0;
 
-
-HFX fx[10] = { -1 };
 sf::Text text_ms;
 
 fv::PopMenu popMenu;
 
-void cleanFx();
 inline void fill_music(fv::MusicPlayer *player, std::shared_ptr<sfg::Box> scrolled_window_box, fv::Pumper *pumper);
 void loadAllCharGlyph(sf::RenderWindow* window);
 void init_3D_pos();
@@ -394,43 +391,19 @@ int main(int argc,char **argv)
 			if (event.type == sf::Event::KeyReleased) {
 				switch (event.key.code)
 				{
-				case sf::Keyboard::D:
+				case sf::Keyboard::M:
 					isDrawMs = !isDrawMs;
 					break;
-				case sf::Keyboard::H:
+				case sf::Keyboard::N:
 					switch_fft_mode(*draw_fft_window);
 					break;
 				default:
 					break;
 				}
-			}			
-			/*if (!enable_init_3d && event.type == sf::Event::KeyReleased)
-			{
-				if (!player.isOff())
-				{
-					for (int i = 0; i < 10; i++)
-					{
-						if (event.key.code == i)
-						{
-							if (fx[i] == -1)
-							{
-								fx[i] = BASS_ChannelSetFX(player.getChan(), BASS_FX_DX8_CHORUS + i, i);
-							}
-							else
-							{
-								if (BASS_ChannelRemoveFX(player.getChan(), fx[i]))
-								{
-									fx[i] = -1;
-								}
-							}
-						}
-					}
-				}
-			}*/
+			}
+			player.handleEvent(event);
 		}
-
 		
-
 		//if (clock.getElapsedTime() >= sf::milliseconds(32))
 		{
 			
@@ -586,7 +559,6 @@ void fill_music(fv::MusicPlayer *player,std::shared_ptr<sfg::Box> scrolled_windo
 				pumper->setIndex(0);
 			}
 			else {
-				//cleanFx();
 				player->playStream(*pmf);
 				pumper->setIndex(i + 1);
 			}
@@ -658,13 +630,6 @@ void loadAllCharGlyph(sf::RenderWindow* window)
 	drawSchedule<50>(window);
 }
 
-void cleanFx()
-{
-	for (int i = 0; i < 10; i++)
-	{
-		fx[i] = -1;
-	}
-}
 
 void destroy()
 {

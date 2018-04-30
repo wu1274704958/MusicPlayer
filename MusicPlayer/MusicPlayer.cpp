@@ -1,4 +1,5 @@
 #include "MusicPlayer.h"
+#include <SFML\Graphics.hpp>
 #include <bassflac.h>
 
 
@@ -14,6 +15,7 @@ fv::MusicPlayer::MusicPlayer(bool enable3d)
 	}
 	else
 	{
+		cleanFX();
 		if (!BASS_Init(-1, 44100, 0, NULL, NULL))
 		{
 			throw "BASS init failed";
@@ -39,7 +41,6 @@ void fv::MusicPlayer::playStream(const  MMFile& file, bool loop)
 		}
 		BASS_SampleFree(chan);
 	}
-
 	/*if(lstrcmpW(file.getSuffix(),L".flac") == 0)
 	{ 
 		if (IsEnable3D)
@@ -61,22 +62,38 @@ void fv::MusicPlayer::playStream(const  MMFile& file, bool loop)
 	{
 		if (IsEnable3D)
 		{
-			chan = BASS_SampleLoad(FALSE, (const WCHAR *)file.getAbsolutePath(), 0, 0, 1,BASS_MUSIC_FLOAT | BASS_SAMPLE_3D | BASS_SAMPLE_MONO);
+			chan = BASS_SampleLoad(FALSE, (const WCHAR *)file.getAbsolutePath(), 0, 0, 1,BASS_MUSIC_FLOAT | BASS_SAMPLE_3D | BASS_MUSIC_MONO );
 			IsSupport3D = true;
 			if (!chan && BASS_ErrorGetCode() == BASS_ERROR_NO3D)
 			{
-				chan = BASS_SampleLoad(FALSE, (const WCHAR *)file.getAbsolutePath(), 0, 0, 1, BASS_MUSIC_FLOAT | BASS_SAMPLE_MONO);
+				if (lstrcmpW(file.getSuffix(), L".flac") == 0)
+				{
+					chan = BASS_FLAC_StreamCreateFile(FALSE, (const WCHAR *)file.getAbsolutePath(), 0, 0, 0);
+				}
+				else {
+					chan = BASS_StreamCreateFile(FALSE, (const WCHAR *)file.getAbsolutePath(), 0, 0, 0);
+				}
+				
 				IsSupport3D = false;
 			}
 		}
 		else
 		{
-			chan = BASS_SampleLoad(FALSE, (const WCHAR *)file.getAbsolutePath(), 0, 0,1, BASS_MUSIC_FLOAT | BASS_SAMPLE_MONO);
+			if (lstrcmpW(file.getSuffix(), L".flac") == 0)
+			{
+				chan = BASS_FLAC_StreamCreateFile(FALSE, (const WCHAR *)file.getAbsolutePath(), 0, 0, 0);
+			}
+			else {
+				chan = BASS_StreamCreateFile(FALSE, (const WCHAR *)file.getAbsolutePath(), 0, 0, 0);
+			}
 		}
 	}
 	if (chan)
 	{
-		BASS_SampleGetChannel(chan, FALSE);
+		if (IsEnable3D && IsSupport3D)
+			BASS_SampleGetChannel(chan, FALSE);
+		else
+			cleanFX();
 		chan_max_len = BASS_ChannelGetLength(chan, BASS_POS_BYTE);
 		BASS_ChannelPlay(chan, loop);
 	}
@@ -148,7 +165,10 @@ void fv::MusicPlayer::cleanup()
 {
 	if (chan)
 	{
-		BASS_SampleFree(chan);
+		if (IsEnable3D && IsSupport3D)
+			BASS_SampleFree(chan);
+		else
+			BASS_StreamFree(chan);
 		chan = 0;
 	}
 }
@@ -179,5 +199,44 @@ bool fv::MusicPlayer::isEnable3D()
 bool fv::MusicPlayer::isSupport3D()
 {
 	return IsSupport3D;
+}
+
+void fv::MusicPlayer::handleEvent(sf::Event & e)
+{
+	if (e.type != sf::Event::KeyReleased)
+		return;
+	if (!IsEnable3D)
+	{
+		if (!this->isOff())
+		{
+			for (int i = 0; i < 10; i++)
+			{
+				if (e.key.code == i)
+				{
+					if (fx[i] == -1)
+					{
+						fx[i] = BASS_ChannelSetFX(chan, BASS_FX_DX8_CHORUS + i, i);
+					}
+					else
+					{
+						if (BASS_ChannelRemoveFX(chan, fx[i]))
+						{
+							fx[i] = -1;
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+	/*for (auto j : fx)
+		printf("%d ", j);
+	printf("\n");*/
+}
+
+void fv::MusicPlayer::cleanFX()
+{
+	for (auto &f : fx)
+		f = -1;
 }
 

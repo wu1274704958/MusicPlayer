@@ -2,6 +2,10 @@
 #include <bass.h>
 #include"MMFile.h"
 
+namespace sf {
+	class Event;
+}
+
 namespace fv {
 	class MusicPlayer
 	{
@@ -28,11 +32,16 @@ namespace fv {
 		bool isEnable3D();
 		bool isSupport3D();
 
+		void handleEvent(sf::Event& e);
+	private:
+		void cleanFX();
+
 	private:
 		HSTREAM chan = 0;
 		QWORD chan_max_len = 0;
 		bool IsEnable3D = false;
 		bool IsSupport3D = false;
+		HFX fx[10];
 	};
 
 }

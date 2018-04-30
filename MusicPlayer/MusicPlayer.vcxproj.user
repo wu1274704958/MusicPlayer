@@ -3,6 +3,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerWorkingDirectory>$(ProjectDir)..\x64\Debug</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>800 600 D:\Music true</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>800 600 D:\Music false</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>
