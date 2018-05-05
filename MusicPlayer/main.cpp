@@ -158,7 +158,7 @@ int main(int argc,char **argv)
 	});
 	drawSchedule<69>(&render_window);
 	auto btn_back = sfg::Button::Create(L"返回");
-	btn_back->GetSignal(sfg::Widget::OnLeftClick).Connect([&player,scrolled_window_box] {
+	btn_back->GetSignal(sfg::Widget::OnLeftClick).Connect([&player] {
 		if (file_root.size() > 1)
 		{
 			file_root.pop();
@@ -167,12 +167,13 @@ int main(int argc,char **argv)
 	});
 	drawSchedule<70>(&render_window);
 	auto btn_3d = sfg::CheckButton::Create(L"3D环绕");
+	std::weak_ptr<sfg::CheckButton> ptr_btn_3d = btn_3d;
 	btn_3d->GetSignal(sfg::CheckButton::OnToggle).Connect(
-		[btn_3d,&player] {
-			
+		[ptr_btn_3d,&player] {
+			auto sp = ptr_btn_3d.lock();
 			if (player.isEnable3D() && player.isSupport3D())
 			{
-				enable3DSurround = btn_3d->IsActive();
+				enable3DSurround = sp->IsActive();
 				if (!enable3DSurround)
 				{
 					BASS_3DVECTOR p{ 0,0,0 };
@@ -184,11 +185,11 @@ int main(int argc,char **argv)
 			}
 			else
 			{
-				btn_3d->SetActive(false);
+				sp->SetActive(false);
 			}
-			
 		}
 	);
+	
 	drawSchedule<71>(&render_window);
 	auto button_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL, 2.0f);
 
@@ -209,11 +210,13 @@ int main(int argc,char **argv)
 		isPressed_for_scale = true;
 	});
 	drawSchedule<79>(&render_window);
-	scale->GetSignal(sfg::Widget::OnMouseLeftRelease).Connect([scale,&player]
+	std::weak_ptr<sfg::Scale> w_scale = scale;
+	scale->GetSignal(sfg::Widget::OnMouseLeftRelease).Connect([w_scale,&player]
 	{
+		auto sp = w_scale.lock();
 		if (!player.isOff())
 		{
-			QWORD r = (player.getLength() / 100) * scale->GetValue();
+			QWORD r = (player.getLength() / 100) * sp->GetValue();
 			//printf("++++++++++%ld++++++++++\n",r);
 			player.setPosition(r, BASS_POS_BYTE);
 			//printf("-----------------------\n"); 
@@ -225,6 +228,7 @@ int main(int argc,char **argv)
 		if(isPressed_for_scale)
 			isPressed_for_scale = false;
 	});
+	
 	//scale->GetAdjustment()->GetSignal(sfg::Adjustment::OnChange).Connect();
 	drawSchedule<80>(&render_window);
 	auto pump_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL, 2.0f);
@@ -235,8 +239,11 @@ int main(int argc,char **argv)
 	pump_mode_combobox->AppendItem(L"Loop");
 	pump_mode_combobox->AppendItem(L"Rand");
 
-	pump_mode_combobox->GetSignal(sfg::ComboBox::OnSelect).Connect([pump_mode_combobox,&pumper] {
-		switch (pump_mode_combobox->GetSelectedItem())
+	std::weak_ptr<sfg::ComboBox> w_pmc = pump_mode_combobox;
+
+	pump_mode_combobox->GetSignal(sfg::ComboBox::OnSelect).Connect([w_pmc,&pumper] {
+		auto sp = w_pmc.lock();
+		switch (sp->GetSelectedItem())
 		{
 		case 0:
 			pumper.setMode(fv::Pumper::NONE);
@@ -251,9 +258,9 @@ int main(int argc,char **argv)
 	});
 
 	auto btn_pump_dir = sfg::CheckButton::Create(L"自动展开文件夹");
-
-	btn_pump_dir->GetSignal(sfg::CheckButton::OnToggle).Connect([btn_pump_dir, &pumper] {
-		pumper.setPumpDir(btn_pump_dir->IsActive());
+	std::weak_ptr<sfg::CheckButton> w_bpd = btn_pump_dir;
+	btn_pump_dir->GetSignal(sfg::CheckButton::OnToggle).Connect([w_bpd, &pumper] {
+		pumper.setPumpDir(w_bpd.lock()->IsActive());
 	});
 
 	pump_box->Pack(pump_mode_combobox);
@@ -270,10 +277,12 @@ int main(int argc,char **argv)
 
 
 	volumeScale->SetValue(100.f);
-
-	volumeScale->GetAdjustment()->GetSignal(sfg::Adjustment::OnChange).Connect([volumeScale] {
-		std::cout << volumeScale->GetValue() << std::endl;
-		BASS_SetConfig(BASS_CONFIG_GVOL_SAMPLE, volumeScale->GetValue() * 100);
+	std::weak_ptr<sfg::Scale> w_vs = volumeScale;
+	volumeScale->GetAdjustment()->GetSignal(sfg::Adjustment::OnChange).Connect([w_vs] {
+		//std::cout << volumeScale->GetValue() << std::endl;
+		auto sp = w_vs.lock();
+		BASS_SetConfig(BASS_CONFIG_GVOL_SAMPLE, sp->GetValue() * 100);
+		BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, sp->GetValue() * 100);
 		//BASS_SetVolume( / 100.0f);
 	});
 

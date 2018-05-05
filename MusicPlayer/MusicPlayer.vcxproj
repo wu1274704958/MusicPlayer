@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClCompile Include="FFT1_View.cpp" />
     <ClCompile Include="FFT2_View.cpp" />
+    <ClCompile Include="FFT3_View.cpp" />
     <ClCompile Include="FuncBox.cpp" />
     <ClCompile Include="GetFileName.cpp" />
     <ClCompile Include="main.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="ArgsAnalysiser.h" />
     <ClInclude Include="FFT1_View.h" />
     <ClInclude Include="FFT2_View.h" />
+    <ClInclude Include="FFT3_View.h" />
     <ClInclude Include="FFT_view.h" />
     <ClInclude Include="FuncBox.h" />
     <ClInclude Include="GetFileName.h" />

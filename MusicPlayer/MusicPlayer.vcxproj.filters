@@ -45,6 +45,9 @@
     <ClCompile Include="FuncBox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="FFT3_View.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GetFileName.h">
@@ -78,6 +81,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="FuncBox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FFT3_View.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
